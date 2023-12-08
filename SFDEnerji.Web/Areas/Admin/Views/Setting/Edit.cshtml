@@ -1,0 +1,39 @@
+﻿@using SFDEnerji.Models;
+@model Setting
+<div class="row">
+
+    <div class="col-lg-12">
+        <div class="card border border-primary">
+            <div class="card-header bg-primary border-primary">
+                <h5 class="my-0 text-white"><i class="uil uil-message me-3"></i>Sayfa Ayarları</h5>
+            </div><!-- end card-header -->
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3 row">
+                        <label asp-for="Slogan1" class="col-4 col-form-label">Slogan 1. Satır</label>
+                        <div class="col-8">
+                            <input asp-for="Slogan1" class="form-control"  placeholder="Birinci sloganı giriniz" value="@Model.Slogan1">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label asp-for="Slogan2" class="col-4 col-form-label">Slug</label>
+                        <div class="col-8">
+                            <input asp-for="Slogan2" class="form-control" placeholder="Ana sloganın altındaki yazıyı giriniz" value="@Model.Slogan2">
+                        </div>
+                    </div>
+                
+
+                    <div class="mb-3 row">
+                        <div class="offset-sm-4 col-sm-8">
+                            <button type="submit" class="btn btn-primary">Güncelle</button>
+                        </div>
+                    </div>
+
+
+                </form>
+
+            </div><!-- end card-body -->
+        </div><!-- end card -->
+    </div>
+
+</div>

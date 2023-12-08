@@ -1,0 +1,81 @@
+﻿@using SFDEnerji.Models;
+@model Project;
+@{
+    ViewData["Title"] = "Yeni Proje Ekle";
+   
+}
+
+<div class="row">
+
+    <div class="col-lg-12">
+        <div class="card border border-primary">
+            <div class="card-header bg-primary border-primary">
+                <h5 class="my-0 text-white"><i class="uil uil-message me-3"></i>Proje Ekleme Formu</h5>
+            </div><!-- end card-header -->
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3 row">
+                        <label asp-for="Name" class="col-4 col-form-label">Başlık</label>
+                        <div class="col-8">
+                            <input asp-for="Name" class="form-control" required placeholder="Başlık giriniz">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label asp-for="Slug" class="col-4 col-form-label">Slug</label>
+                        <div class="col-8">
+                            <input asp-for="Slug" class="form-control" required placeholder="Boşluksuz ve türkçe karaktersiz olmalı">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label asp-for="ServiceId" class="col-4 col-form-label">İlgili Hizmet</label>
+                        <div class="col-8">
+                           <select asp-for="ServiceId" class="form-select">
+                                <option value="0">Lütfen seçiniz</option>
+                                   @foreach (var item in ViewBag.Services as List<Service>)
+                               {
+                                   <option value="@item.Id">@item.Name</option>
+                               }
+                               </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label asp-for="Content" class="col-4 col-form-label">İçerik</label>
+                        <div class="col-8">
+                            <textarea  id="ckEditor" name="ckEditor" ></textarea>
+                            <input type="hidden" id="txtContent" asp-for="Content" />
+                          
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="mb-3 row">
+                        <div class="offset-sm-4 col-sm-8">
+                            <button type="submit" class="btn btn-primary">Action</button>
+                        </div>
+                    </div>
+
+
+                </form>
+
+            </div><!-- end card-body -->
+        </div><!-- end card -->
+    </div>
+
+</div>
+@section Scripts{
+    <script src="~/assets/libs/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#ckEditor')).then(editor => {
+                editor.model.document.on('change:data', () => {
+                    const editorValue = editor.getData();
+                    document.querySelector('#txtContent').value = editorValue;
+                });
+            })
+            .catch(error => {
+                console.error(error);
+            });
+       
+    </script>
+}

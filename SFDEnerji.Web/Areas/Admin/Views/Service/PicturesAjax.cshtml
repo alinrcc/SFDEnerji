@@ -1,0 +1,92 @@
+﻿<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title">Hizmete ait Fotoğraflar</h4>
+
+
+                <div>
+                    <form enctype="multipart/form-data" method="post" action="/Admin/Service/SavePictures" id="frmPictures">
+                        <input name="postedFiles" type="file" class="form-control" multiple>
+                        <input name="serviceId" type="hidden" value="@Context.Request.Query["id"]" />
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Dosyaları Gönder</button>
+                        </div>
+                    </form>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title">Yüklenmiş Fotoğraflar</h4>
+
+
+                <div class="row" id="divPhotos">
+
+                   
+                        
+
+
+                    
+
+
+                </div>
+            </div>
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->
+@section Scripts{
+    <script>
+        fillPictures();
+        function fillPictures() {
+            $.ajax({
+                type: 'POST',
+                url: '/Admin/Service/GetAllPictures/',
+                data: { serviceId: @Context.Request.Query["serviceId"]},
+                success: function (res) {
+                    $("#divPhotos").empty();
+                    for (var item of res) {
+
+                        $("#divPhotos").append(`<div class="col-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <img height="200" width="200" src="/Files/Services/Gallery/${item.path}">
+                                                </div>
+                                                <div class="card-footer text-center">
+                                                    <a onclick="deletePicture(${item.id})" " class="btn btn-danger">Sil</a>
+
+                                                </div>
+                                            </div>
+                                        </div>`);
+                    }
+                }
+
+            });
+        }
+      
+
+        function deletePicture(pictureId) { 
+            if (confirm('silmek istediğinziden emin misiniz ?'))
+                $.ajax({
+                    type: 'POST',
+                    url: '/Admin/Picture/Delete',
+                    data: { id: pictureId },
+                    success: function () {
+                        fillPictures();
+                    }
+                });
+        }
+
+    </script>
+}

@@ -1,0 +1,160 @@
+﻿<div class="row">
+
+    <div class="col-lg-12">
+        <div class="card border border-primary">
+            <div class="card-header bg-primary border-primary">
+                <h5 class="my-0 text-white"><i class="uil uil-message me-3"></i>Hizmetler</h5>
+            </div><!-- end card-header -->
+            <div class="card-body">
+                <a href="#" id="btnAdd" class="btn btn-primary">Yeni Ekle</a>
+
+                <table id="tblServices" class="table table-striped table-bordered">
+                </table>
+
+            </div><!-- end card-body -->
+        </div><!-- end card -->
+    </div>
+
+</div>
+
+
+
+<div class="modal fade" id="modalAddUpdate" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleId">Yeni Hizmet Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" data-bs-target="#modalAddUpdate" aria-label="Close"></button>
+            </div>
+            <form id="frmAddService" class="needs-validation">
+                <div class="modal-body">
+
+                    <div class="container">
+
+                        <div class="mb-3 row">
+                            <label for="inputName" class="col-4 col-form-label">Temsili Görsel</label>
+                            <img src="assets/images/users/avatar-4.jpg" id="imgThumbnail" alt="" height="200">
+                            <input type="file" name="thumbnail" required id="fileThumbnail" style="display:none;" accept=".jpeg,.jpg,.png" />
+                            <div class="col-8">
+                                <label for="fileThumbnail"><a class="btn btn-success btn-sm">Seç</a></label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label for="inputName" class="col-4 col-form-label">Başlık</label>
+                            <div class="col-8">
+                                <input type="text" data-parsley-minlength="6" class="form-control needs-validation" id="txtName" placeholder="Lütfen başlık giriniz">
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label for="inputName" class="col-4 col-form-label">Slug</label>
+                            <div class="col-8">
+                                <input type="text" class="form-control" id="txtSlug" data-parsley-required-message="Bir slug girmek zorunludur" required placeholder="Sisteme giriş için kullanılacaktır">
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label for="inputName" class="col-4 col-form-label">İçerik</label>
+                            <div class="col-8">
+                                <textarea id="txtContent" class="form-control tinymce"></textarea>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-target="#modalAddUpdate">Kapat</button>
+                    <button type="submit" id="btnSave" class="btn btn-primary">Ekle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/assets/libs/tinymce/tinymce.min.js"></script>
+
+    <script>
+        var tinyMCE;
+
+        $(document).ready(function () {
+            tinyMCE = tinymce.init({
+                selector: (".tinymce"),  // change this value according to your HTML
+                plugin: 'a_tinymce_plugin',
+                a_plugin_option: true,
+                a_configuration_option: 400
+            });
+            $('.image-link').magnificPopup({ type: 'image' });
+
+
+        });
+
+        $("#btnAdd").click(function () {
+            $("#modalAddUpdate").modal('show');
+
+            $("#btnSave").click(function () {
+                event.preventDefault();
+
+                if ($("#frmAddService").parsley().isValid() == false) {
+                    $("#frmAddService").parsley().validate();
+                    $("#frmAddService").addClass("was-validated");
+                }
+                else {
+                    alert("validasyondan geçti");
+
+                    var formData = new FormData();
+                    formData.append("file", $("#fileThumbnail")[0].files[0]);
+                    formData.append("name", $("#txtName").val());
+                    formData.append("slug", $("#txtSlug").val());
+                    tinymce.triggerSave();
+                    formData.append("content", $("#txtContent").val());
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Admin/Service/Add',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (res) {
+                            alert("çalıştı");
+                        }
+                    })
+
+
+                }
+
+            })
+        })
+
+        var DataTable;
+        $("#tblServices").DataTable({
+            ajax: '/Admin/Service/GetAll',
+            columns: [
+                { data: 'id', title: 'ID' },
+                { data: 'name', title: 'Başlık' },
+                { data: 'slug', title: 'Slug' },
+                { data: 'content', title: 'İçerik' },
+                {
+                    data: 'pictures', title: 'Fotolar', render: function (data,type,row) {
+
+                        return `<a href="/Admin/Service/Pictures/?serviceId=${row.id}" class="btn btn-sm btn-primary">${data.length}</a>`;
+
+                    }
+                },
+                {
+                    data: 'thumbnail', title: 'Görsel', render: function (data) {
+                        return `<a class="image-link" target="_blank" href="/Files/Services/Thumbnails/${data}"><img class=" avatar-lg rounded-circle" src="/Files/Services/Thumbnails/${data}"></a>`
+                    }
+
+                },
+                { data: 'viewCount', title: 'Görüntülenme' }
+            ]
+        });
+
+
+
+    </script>
+}

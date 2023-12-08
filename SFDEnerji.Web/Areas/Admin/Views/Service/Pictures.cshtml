@@ -1,0 +1,72 @@
+﻿@using SFDEnerji.Models;
+@model List<Picture>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title">Hizmete ait Fotoğraflar</h4>
+              
+
+                <div>
+                    <form enctype="multipart/form-data" method="post" action="/Admin/Service/SavePictures" id="frmPictures">
+                        <input name="postedFiles" type="file" class="form-control" multiple>
+                        <input name="serviceId" type="hidden" value="@Context.Request.Query["serviceId"]" />
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Dosyaları Gönder</button>
+                        </div>
+                    </form>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title">Yüklenmiş Fotoğraflar</h4>
+
+
+                <div class="row" id="divPhotos">
+                   
+                    @foreach(var item in Model)
+                    {
+                        <div class="col-3">
+                            <div class="card">
+                                <div class="card-body">
+                            <img height="200" width="200" src="~/Files/Services/Gallery/@item.Path">
+                            </div>
+                            <div class="card-footer text-center">
+                                    <a onclick="return confirm('Silmek istediğinizden emin misiniz ?')" href="/Admin/Service/DeletePicture/?serviceId=@Context.Request.Query["serviceId"]&pictureId=@item.Id" class="btn btn-danger">Sil</a>
+
+                            </div>
+                            </div>
+                        </div>
+                       
+                      
+                    }
+
+
+                </div>
+            </div>
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->
+
+@section Scripts{
+    <script>
+        // $("#frmPictures").submit(function () {
+
+
+
+        // });
+
+    </script>
+}
